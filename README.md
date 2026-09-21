@@ -1,13 +1,10 @@
-# Muchi Explore Engine v1.5.1
+# Muchi Explore Engine v1.5.2
 
-v1.5.1 adds a shared PC/mobile portrait background for the exploration UI. Story logic and MVU settlement rules are unchanged.
+移动端滚动修复版。
 
-## Required asset path
-
-Place the background at:
-
-`Assets/explore_bg.png`
-
-The module resolves the image relative to `import.meta.url`, so a tagged module automatically uses the asset from the same tag; a `main` fallback uses the asset from `main`.
-
-Recommended image: 9:16 portrait. The same file is used on desktop and mobile with `background-size: cover`.
+- 手机端外层严格贴合 `visualViewport`。
+- 顶部标题/关闭按钮始终保留在可见区域。
+- 内容统一由面板主体纵向滚动，不再出现超高卡片却无法滑动。
+- 地点节点保持横向滑动，并增加 Android 触摸滚动兼容。
+- 搜索操作在手机端改为 2+1 紧凑布局，彻底搜索独占一行，避免按钮横向溢出。
+- 保留 v1.5.1 的背景图、父母暗线、动态复查与全部结算逻辑。

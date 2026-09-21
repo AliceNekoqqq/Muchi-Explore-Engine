@@ -1,8 +1,8 @@
-# v1.5.0 tests
+# v1.5.2 测试
 
-1. Mobile panel opens centered in the actual visible viewport.
-2. Close button stays reachable; tapping backdrop closes.
-3. Area cards scroll horizontally.
-4. Main content is vertically scrollable and occupies most of the panel.
-5. Quick/focused/deep search cards remain functional.
-6. Parent events, pending loot and Symbiosis link remain unchanged.
+1. Android 360/390/412/430 CSS px 宽度下打开现场探索。
+2. 顶部关闭按钮必须始终可见。
+3. 在正文区域上下滑动，必须能完整看到搜索按钮、最近结果、待收取与底部说明。
+4. 地点节点区域应可左右滑动，不影响下方纵向滚动。
+5. 搜索按钮不得超出面板右侧；快速/仔细两列，彻底搜索独占下一行。
+6. 关闭后重开、切换区域、完成搜索后再次渲染，滚动仍正常。
