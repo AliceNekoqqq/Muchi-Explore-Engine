@@ -1,8 +1,8 @@
 async function importMuchiExplore(){
   const urls=[
     'https://cdn.jsdelivr.net/gh/AliceNekoqqq/Muchi-Explore-Engine@v1.5.9/index.js?explore=159',
-    'https://testingcf.jsdelivr.net/gh/AliceNekoqqq/Muchi-Explore-Engine@2f57e3e348cf00d574398d4f053eb1de9a78bf5f/index.js?explore=159',
-    'https://fastly.jsdelivr.net/gh/AliceNekoqqq/Muchi-Explore-Engine@2f57e3e348cf00d574398d4f053eb1de9a78bf5f/index.js?explore=159'
+    'https://testingcf.jsdelivr.net/gh/AliceNekoqqq/Muchi-Explore-Engine@v1.5.9/index.js?explore=159',
+    'https://fastly.jsdelivr.net/gh/AliceNekoqqq/Muchi-Explore-Engine@v1.5.9/index.js?explore=159'
   ];
   const errors=[];
   for(const url of urls){
