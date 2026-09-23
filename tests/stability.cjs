@@ -21,6 +21,8 @@ const parentCtx={ensureParentShadow:sd=>sd.暗线.父母};vm.createContext(paren
 const parentState={世界:{灾变日:9},暗线:{父母:{状态:'未寻获',改道已确认:false}}};
 assert.equal(parentCtx.parentHiddenEvent(parentState,'河西社区医院','A08',2,0).type,'death');
 parentState.暗线.父母.改道已确认=true;assert.equal(parentCtx.parentHiddenEvent(parentState,'河西社区医院','A08',2,0),null);
+parentState.世界.灾变日=5;assert.equal(parentCtx.parentHiddenEvent(parentState,'槐安公寓','A01',1,0),null);
+parentState.世界.灾变日=7;assert.equal(parentCtx.parentHiddenEvent(parentState,'河西旧街','A05',3,0),null);
 console.log('PASS parent: confirmed reroute prevents default day-nine death; unchanged history retains it');
 
 const advanceSource=source.split('\n').find(line=>line.startsWith('function advanceTime('));
