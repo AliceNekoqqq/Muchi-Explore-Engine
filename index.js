@@ -1,8 +1,8 @@
-// Muchi Explore Engine v1.5.4
+// Muchi Explore Engine v1.5.6
 // Standalone TavernHelper exploration engine for the Muchi City character card.
 // Runtime state remains in the current chat's MVU variables; this module stores no story state in localStorage.
 
-export const EXPLORE_VERSION = '1.5.4';
+export const EXPLORE_VERSION = '1.5.6';
 
 function resolveExploreHost() {
   try {
@@ -18,7 +18,7 @@ function resolveExploreHost() {
 export async function mountExplore() {
   await waitGlobalInitialized('Mvu');
   (()=>{
-const VERSION='1.5.4';
+const VERSION='1.5.6';
 const ROOT_ID='muchi-explore-v154';
 const STYLE_ID='muchi-explore-style-v154';
 const BACKGROUND_URL=new URL('./Assets/explore_bg.png',import.meta.url).href;
@@ -50,8 +50,8 @@ function parentRecheckEvent(sd,locName,areaId,oldTier){const ev=parentHiddenEven
 function applyParentHiddenEvent(sd,ev,locName){if(!ev)return;const p=ensureParentShadow(sd);if(ev.type==='rescue'){p.状态='已相遇';p.阶段='重逢后';p.当前地点=locName;p.相遇地点=locName;p.最近线索='终于找到父母本人'}else if(ev.type==='death'){p.状态='遗体已发现';p.阶段='死亡现场';p.当前地点=locName;p.相遇地点=locName;p.最近线索='发现两名高度疑似父母的尸化感染者';if(p.尸变CG!=='已展示')p.尸变CG='待展示'}if(ev.clue&&!p.已知线索.includes(ev.clue))p.已知线索.push(ev.clue)}
 function currentLoc(sd){return String(sd?.世界?.当前地点||'')}
 function lastId(){try{return typeof getLastMessageId==='function'?Math.max(0,Number(getLastMessageId())||0):0}catch{return 0}}
-function roundCapacity(sd){const c=sd?.沈挽昼?.核心状态||{},stage=String(c.异化阶段||'稳定'),san=Number(c.理智值??100),rage=Number(c.躁变值??0),sup=Number(c.抑制剩余分钟??0);if(c.是否狂暴||stage==='狂暴')return 0;if(stage==='半狂暴'||stage==='深度异化'||san<30||rage>=60)return 1;if(stage==='发作前兆'||rage>=45||sup<=60)return 2;return 3}
-function roundBlockReason(sd){const c=sd?.沈挽昼?.核心状态||{},stage=String(c.异化阶段||'稳定');if(c.是否狂暴||['狂暴','深度异化'].includes(stage))return '沈挽昼当前已经失去稳定行动条件，必须先处理失控状态';if(stage==='半狂暴'||Number(c.理智值??100)<30)return '沈挽昼当前处于半狂暴/低理智状态，不适合继续安静搜刮';return ''}
+function roundCapacity(sd){const c=sd?.沈挽昼?.核心状态||{},stage=String(c.异化阶段||'稳定'),san=Number(c.理智值??100),rage=Number(c.躁变值??0),sup=Number(c.抑制剩余分钟??0);if(c.是否狂暴||stage==='狂暴')return 0;if(stage==='半狂暴'||stage==='深度异化'||san<=30||rage>=60)return 1;if(stage==='发作前兆'||rage>=45||sup<=60)return 2;return 3}
+function roundBlockReason(sd){const c=sd?.沈挽昼?.核心状态||{},stage=String(c.异化阶段||'稳定');if(c.是否狂暴||stage==='狂暴')return '沈挽昼当前已经失去稳定行动条件，必须先处理失控状态';if(stage==='半狂暴'||Number(c.理智值??100)<=30)return '沈挽昼当前处于半狂暴/低理智状态，不适合继续安静搜刮';return ''}
 function beginRound(r,sd,loc){const cap=roundCapacity(sd);Object.assign(r,emptyRound(),{状态:'进行中',轮次ID:`R-${Date.now().toString(36)}-${Math.floor(rand()*1e6).toString(36)}`,地点:loc,起始楼层:lastId(),行动上限:cap});return r}
 function riskLevel(sd,noise){const h=clamp(dynamic(sd,currentLoc(sd)).尸群指数,0,100),score=Number(noise||0)+h/45;return score>=5?'高':score>=3?'中':'低'}
 function lockRound(r,reason){r.状态='待剧情推进';r.中断原因=String(reason||'本轮行动窗口已用完');r.解锁楼层=Math.max(lastId()+2,r.起始楼层+2);return r}
@@ -82,7 +82,7 @@ try{eventEmit('muchi:explore-updated',nowResult)}catch{}return nowResult}
 function rarityWeight(r){r=String(r||'');if(r.includes('极稀有'))return 4.5;if(r.includes('稀有'))return 3;if(r.includes('少见'))return 2;if(r.includes('较少'))return 1.5;if(r.includes('唯一')||r.includes('剧情'))return 0;return 1}
 function resourceCost(locName,arr){const mult=LOCATIONS[locName]?.depletion||1;let v=0;for(const x of arr){const m=ITEMS[x.ID]||{rarity:'常见'},q=Math.max(1,Number(x.数量)||1);v+=rarityWeight(m.rarity)*(1+Math.min(1.5,Math.log2(q)/2))}return clamp(Math.round(v*mult),arr.length?1:0,15)}
 function mergeInventory(list,item){const hit=list.find(x=>x.ID===item.ID&&String(x.状态||'')===String(item.状态||'')&&String(x.新鲜度||'')===String(item.新鲜度||''));if(hit)hit.数量=(Number(hit.数量)||0)+(Number(item.数量)||1);else list.push({...item})}
-async function collect(cacheIdValue,dest='用户背包'){let collected=null;await updateVariablesWith(vars=>{vars=vars||{};vars.stat_data=vars.stat_data||{};const sd=vars.stat_data,ex=ensureExplore(sd),idx=ex.待收取.findIndex(x=>x.缓存ID===cacheIdValue);if(idx<0)throw Error('这批物资已经处理或不存在');const cache=ex.待收取[idx];if(currentLoc(sd)!==cache.地点)throw Error(`这批物资仍留在“${cache.地点}”，当前无法远程收取`);if(cache.物品.some(x=>x.ID==='S11'))dest='用户背包';sd.物资=sd.物资||{};sd.物资[dest]=Array.isArray(sd.物资[dest])?sd.物资[dest]:[];for(const item of cache.物品){if(/^S\d+/.test(item.ID)&&uniqueOwned({...sd,地图:{...(sd.地图||{}),探索系统:{...ex,待收取:ex.待收取.filter((_,i)=>i!==idx)}}},item.ID))continue;mergeInventory(sd.物资[dest],item)}sd.暗线=sd.暗线||{};if(cache.物品.some(x=>x.ID==='S11')){sd.暗线.楚泽=sd.暗线.楚泽||{状态:'寻找中',已知线索:[],最近线索:'无'};sd.暗线.楚泽.状态='日记已发现';sd.暗线.楚泽.最近线索='取得黑色硬壳日记'}if(cache.物品.some(x=>x.ID==='S13'||x.ID==='S14')){ensureParentShadow(sd).遗物已取得=true}const cost=resourceCost(cache.地点,cache.物品),ld=sd?.地图?.地点动态?.[cache.地点];if(ld){ld.资源指数=Math.max(0,Number(ld.资源指数||0)-cost);ld.最后更新时间=sd?.世界?.当前时间||ld.最后更新时间}ex.待收取.splice(idx,1);if(ex.最近结果?.缓存ID===cacheIdValue){ex.最近结果.收取状态='已收取';ex.最近结果.收取目标=dest}collected={...cache,目标:dest,资源消耗:cost};return vars},{type:'message',message_id:-1});try{eventEmit('muchi:explore-updated',collected)}catch{}return collected}
+async function collect(cacheIdValue,dest='用户背包'){if(!['用户背包','沈挽昼携带'].includes(dest))throw Error('现场物资只能收进当前携带库存');let collected=null;await updateVariablesWith(vars=>{vars=vars||{};vars.stat_data=vars.stat_data||{};const sd=vars.stat_data,ex=ensureExplore(sd),idx=ex.待收取.findIndex(x=>x.缓存ID===cacheIdValue);if(idx<0)throw Error('这批物资已经处理或不存在');const cache=ex.待收取[idx];if(currentLoc(sd)!==cache.地点)throw Error(`这批物资仍留在“${cache.地点}”，当前无法远程收取`);if(cache.物品.some(x=>x.ID==='S11'))dest='用户背包';sd.物资=sd.物资||{};sd.物资[dest]=Array.isArray(sd.物资[dest])?sd.物资[dest]:[];for(const item of cache.物品){if(/^S\d+/.test(item.ID)&&uniqueOwned({...sd,地图:{...(sd.地图||{}),探索系统:{...ex,待收取:ex.待收取.filter((_,i)=>i!==idx)}}},item.ID))continue;mergeInventory(sd.物资[dest],item)}sd.暗线=sd.暗线||{};if(cache.物品.some(x=>x.ID==='S11')){sd.暗线.楚泽=sd.暗线.楚泽||{状态:'寻找中',已知线索:[],最近线索:'无'};sd.暗线.楚泽.状态='日记已发现';sd.暗线.楚泽.最近线索='取得黑色硬壳日记'}if(cache.物品.some(x=>x.ID==='S13'||x.ID==='S14')){ensureParentShadow(sd).遗物已取得=true}const cost=resourceCost(cache.地点,cache.物品),ld=sd?.地图?.地点动态?.[cache.地点];if(ld){ld.资源指数=Math.max(0,Number(ld.资源指数||0)-cost);ld.最后更新时间=sd?.世界?.当前时间||ld.最后更新时间}ex.待收取.splice(idx,1);if(ex.最近结果?.缓存ID===cacheIdValue){ex.最近结果.收取状态='已收取';ex.最近结果.收取目标=dest}collected={...cache,目标:dest,资源消耗:cost};return vars},{type:'message',message_id:-1});try{eventEmit('muchi:explore-updated',collected)}catch{}return collected}
 function summary(locName,sd=stat()){const loc=LOCATIONS[locName];if(!loc)return null;const ex=ensureExplore(sd),r=ensureRound(ex);let pts=0;for(const ar of loc.areas)pts+=tierOf(ex,locName,ar.id);const total=loc.areas.length*3;return {location:locName,areas:loc.areas.length,points:pts,total,percent:total?Math.round(pts/total*100):0,pending:(ex.待收取||[]).filter(x=>x.地点===locName).length,roundState:r.地点===locName?r.状态:'空闲',roundRemaining:r.地点===locName?roundRemaining(r):roundCapacity(sd),roundRisk:r.地点===locName?r.风险等级:'低'}}
 function itemLine(x){const m=ITEMS[x.ID]||{icon:'◇'};return `<div class="me-loot"><i>${esc(m.icon||'◇')}</i><span><b>${esc(x.名称||x.ID)}</b><small>${esc(x.ID)} · ${esc(m.rarity||'')}</small></span><strong>×${esc(x.数量)}</strong></div>`}
 let viewportHandler=null,viewportBound=false;
