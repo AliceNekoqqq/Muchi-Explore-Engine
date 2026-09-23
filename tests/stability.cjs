@@ -15,3 +15,19 @@ chat.push({is_user:true,mes:'[探索行动轮已结算]\n轮次ID：R-123'});ass
 chat.push({is_user:false,mes:'正文承接搜索'});assert.equal(isolated.check.roundReceiptAcknowledged(round),true);
 const reservationState={地图:{地点动态:{测试地点:{资源指数:90}},探索系统:{待收取:[{地点:'测试地点',物品:[{cost:10}]},{地点:'别处',物品:[{cost:30}]},{地点:'测试地点',物品:[{cost:7}]}]}}};assert.equal(isolated.check.availableResource(reservationState,'测试地点'),73);
 console.log('PASS explore: receipt must precede assistant response; pending batches reserve resource');
+
+const parentSource=source.split('\n').find(line=>line.startsWith('function parentHiddenEvent('));
+const parentCtx={ensureParentShadow:sd=>sd.暗线.父母};vm.createContext(parentCtx);vm.runInContext(parentSource+'\nglobalThis.parentHiddenEvent=parentHiddenEvent;',parentCtx);
+const parentState={世界:{灾变日:9},暗线:{父母:{状态:'未寻获',改道已确认:false}}};
+assert.equal(parentCtx.parentHiddenEvent(parentState,'河西社区医院','A08',2,0).type,'death');
+parentState.暗线.父母.改道已确认=true;assert.equal(parentCtx.parentHiddenEvent(parentState,'河西社区医院','A08',2,0),null);
+console.log('PASS parent: confirmed reroute prevents default day-nine death; unchanged history retains it');
+
+const advanceSource=source.split('\n').find(line=>line.startsWith('function advanceTime('));
+const cureCtx={parseUtc:Date.parse,fmtUtc:n=>new Date(n).toISOString(),period:()=> '夜间',START:'2024-10-27T19:42:00Z',CURE:'2026-04-27T19:42:00Z'};
+vm.createContext(cureCtx);vm.runInContext(advanceSource+'\nglobalThis.advanceTime=advanceTime;',cureCtx);
+const cureState={世界:{当前时间:'2026-04-28T12:00:00Z',解药:{研发完成时间:'2026-04-27T19:42:00Z',状态:'已稳定',终局阶段:'已稳定'}},沈挽昼:{核心状态:{抑制剩余分钟:0}}};
+cureCtx.advanceTime(cureState,15);assert.equal(cureState.世界.解药.状态,'已稳定');assert.equal(cureState.世界.解药.终局阶段,'已稳定');
+const waiting={世界:{当前时间:'2026-04-27T19:41:00Z',解药:{研发完成时间:'2026-04-27T19:42:00Z',状态:'研发中',终局阶段:'等待研发'}},沈挽昼:{核心状态:{抑制剩余分钟:0}}};
+cureCtx.advanceTime(waiting,2);assert.equal(waiting.世界.解药.状态,'研发完成');assert.equal(waiting.世界.解药.终局阶段,'寻找发放点');
+console.log('PASS cure: exploration clock advances research but preserves completed treatment');
