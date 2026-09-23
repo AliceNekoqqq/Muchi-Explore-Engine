@@ -1,8 +1,8 @@
 async function importMuchiExplore(){
   const urls=[
-    'https://cdn.jsdelivr.net/gh/AliceNekoqqq/Muchi-Explore-Engine@v1.5.4/index.js?explore=154',
-    'https://testingcf.jsdelivr.net/gh/AliceNekoqqq/Muchi-Explore-Engine@main/index.js?explore=154',
-    'https://fastly.jsdelivr.net/gh/AliceNekoqqq/Muchi-Explore-Engine@main/index.js?explore=154'
+    'https://cdn.jsdelivr.net/gh/AliceNekoqqq/Muchi-Explore-Engine@v1.5.5/index.js?explore=155',
+    'https://testingcf.jsdelivr.net/gh/AliceNekoqqq/Muchi-Explore-Engine@main/index.js?explore=155',
+    'https://fastly.jsdelivr.net/gh/AliceNekoqqq/Muchi-Explore-Engine@main/index.js?explore=155'
   ];
   const errors=[];
   for(const url of urls){
@@ -12,7 +12,7 @@ async function importMuchiExplore(){
       errors.push(`${url} -> 导出不匹配: ${Object.keys(mod||{}).join(',')||'无导出'}`);
     }catch(e){errors.push(`${url} -> ${e?.message||e}`)}
   }
-  throw new Error('暮迟现场探索引擎加载失败；请先把 Muchi-Explore-Engine v1.5.4 文件上传到独立 GitHub 仓库 main。'+errors.join(' | '));
+  throw new Error('暮迟现场探索引擎加载失败；请先把 Muchi-Explore-Engine v1.5.5 文件上传到独立 GitHub 仓库 main。'+errors.join(' | '));
 }
 const muchiExplore=await importMuchiExplore();
 const muchiExploreApi=await muchiExplore.mountExplore();
