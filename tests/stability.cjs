@@ -5,3 +5,13 @@ const ctx={};vm.createContext(ctx);vm.runInContext(functions+'\nglobalThis.api={
 const state=(stage,san=90,rage=false)=>({沈挽昼:{核心状态:{异化阶段:stage,理智值:san,侵蚀度:85,躁变值:10,是否狂暴:rage,抑制剩余分钟:120}}});
 assert.equal(a.roundCapacity(state('深度异化')),1);assert.equal(a.roundBlockReason(state('深度异化')),'');assert.equal(a.roundCapacity(state('深度异化',90,true)),0);assert.ok(a.roundBlockReason(state('深度异化',90,true)));assert.ok(a.roundBlockReason(state('稳定',30)));assert.equal(a.roundBlockReason(state('稳定',31)),'');
 (async()=>{await assert.rejects(a.collect('cache','安全屋储备'),/当前携带库存/);await assert.rejects(a.collect('cache','任意键'),/当前携带库存/);console.log('PASS explore: conscious deep infection, active rage, sanity boundary, destination validation')})().catch(e=>{console.error(e);process.exitCode=1});
+const receiptFn=source.slice(source.indexOf('function roundReceiptAcknowledged('),source.indexOf('function availableResource('));
+const resourceFn=source.slice(source.indexOf('function availableResource('),source.indexOf('function roundRemaining('));
+let chat=[{is_user:false,mes:'开场'}];
+const isolated={SillyTavern:{get chat(){return chat}},ensureExplore:s=>s.地图.探索系统,resourceCost:(_loc,items)=>items.reduce((n,item)=>n+item.cost,0),dynamic:s=>s.地图.地点动态[Object.keys(s.地图.地点动态)[0]],clamp:(n,min,max)=>Math.min(max,Math.max(min,n)),Number,String,Array,Math};vm.createContext(isolated);vm.runInContext(receiptFn+resourceFn+'\nglobalThis.check={roundReceiptAcknowledged,availableResource};',isolated);
+const round={轮次ID:'R-123',起始楼层:0,解锁楼层:2};chat.push({is_user:true,mes:'别的对话'},{is_user:false,mes:'又一层'});assert.equal(isolated.check.roundReceiptAcknowledged(round),false);
+chat.push({is_user:true,mes:'[探索行动轮已结算]\n轮次ID：R-other'},{is_user:false,mes:'继续'});assert.equal(isolated.check.roundReceiptAcknowledged(round),false);
+chat.push({is_user:true,mes:'[探索行动轮已结算]\n轮次ID：R-123'});assert.equal(isolated.check.roundReceiptAcknowledged(round),false);
+chat.push({is_user:false,mes:'正文承接搜索'});assert.equal(isolated.check.roundReceiptAcknowledged(round),true);
+const reservationState={地图:{地点动态:{测试地点:{资源指数:90}},探索系统:{待收取:[{地点:'测试地点',物品:[{cost:10}]},{地点:'别处',物品:[{cost:30}]},{地点:'测试地点',物品:[{cost:7}]}]}}};assert.equal(isolated.check.availableResource(reservationState,'测试地点'),73);
+console.log('PASS explore: receipt must precede assistant response; pending batches reserve resource');
