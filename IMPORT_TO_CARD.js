@@ -1,19 +1,19 @@
 async function importMuchiExplore(){
   const urls=[
-    'https://cdn.jsdelivr.net/gh/AliceNekoqqq/Muchi-Explore-Engine@v1.5.8/index.js?explore=158',
-    'https://testingcf.jsdelivr.net/gh/AliceNekoqqq/Muchi-Explore-Engine@b5822294477e21def14b6c2efe876494ab303b2b/index.js?explore=158',
-    'https://fastly.jsdelivr.net/gh/AliceNekoqqq/Muchi-Explore-Engine@b5822294477e21def14b6c2efe876494ab303b2b/index.js?explore=158'
+    'https://cdn.jsdelivr.net/gh/AliceNekoqqq/Muchi-Explore-Engine@v1.5.9/index.js?explore=159',
+    'https://testingcf.jsdelivr.net/gh/AliceNekoqqq/Muchi-Explore-Engine@2f57e3e348cf00d574398d4f053eb1de9a78bf5f/index.js?explore=159',
+    'https://fastly.jsdelivr.net/gh/AliceNekoqqq/Muchi-Explore-Engine@2f57e3e348cf00d574398d4f053eb1de9a78bf5f/index.js?explore=159'
   ];
   const errors=[];
   for(const url of urls){
     try{
       const mod=await import(url);
-      if(mod.EXPLORE_VERSION!=='1.5.8')throw new Error('探索模块版本不匹配');
+      if(mod.EXPLORE_VERSION!=='1.5.9')throw new Error('探索模块版本不匹配');
       if(typeof mod?.mountExplore==='function' && typeof mod?.openExplore==='function') return mod;
       errors.push(`${url} -> 导出不匹配: ${Object.keys(mod||{}).join(',')||'无导出'}`);
     }catch(e){errors.push(`${url} -> ${e?.message||e}`)}
   }
-  throw new Error('暮迟现场探索引擎加载失败；请先把 Muchi-Explore-Engine v1.5.8 文件上传到独立 GitHub 仓库 main。'+errors.join(' | '));
+  throw new Error('暮迟现场探索引擎加载失败；请先把 Muchi-Explore-Engine v1.5.9 文件上传到独立 GitHub 仓库 main。'+errors.join(' | '));
 }
 const muchiExplore=await importMuchiExplore();
 const muchiExploreApi=await muchiExplore.mountExplore();
